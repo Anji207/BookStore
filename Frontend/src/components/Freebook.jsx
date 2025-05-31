@@ -1,11 +1,11 @@
+// 📁 src/components/Freebook.jsx
 import React, { useEffect, useState } from "react";
-import list from "../../public/list.json";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import axios from "axios";
-
 import Cards from "./Cards";
+import { motion } from "framer-motion";
 
 function Freebook() {
   const [book, setBook] = useState([]);
@@ -14,9 +14,8 @@ function Freebook() {
     const getBook = async () => {
       try {
         const res = await axios.get("http://localhost:4002/book");
-        const filterData = list.filter((data) => data.category === "Free");
-        console.log(filterData);
-        setBook(filterData);
+        const data = res.data.filter((data) => data.category === "Free");
+        setBook(data);
       } catch (error) {
         console.log(error);
       }
@@ -24,7 +23,7 @@ function Freebook() {
     getBook();
   }, []);
 
-  var settings = {
+  const settings = {
     dots: true,
     infinite: false,
     speed: 500,
@@ -42,11 +41,10 @@ function Freebook() {
         },
       },
       {
-        breakpoint: 600,
+        breakpoint: 768,
         settings: {
           slidesToShow: 2,
           slidesToScroll: 2,
-          initialSlide: 2,
         },
       },
       {
@@ -60,26 +58,38 @@ function Freebook() {
   };
 
   return (
-    <>
+    <section className="bg-[#0e1a2b] py-10 relative overflow-hidden">
+      <div className="absolute bottom-0 w-full bg-black text-white py-2">
+        <marquee behavior="scroll" direction="left" scrollamount="5" className="text-sm md:text-base">
+        🌍 Discover legendary books from world-renowned authors — absolutely FREE! Grab your copies now! 🔥
+        </marquee>
+      </div>
+
       <div className="max-w-screen-2xl container mx-auto md:px-20 px-4">
-        <div>
-          <h1 className="font-semibold text-xl pb-2">Free Offered Courses</h1>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-            Accusantium veritatis alias pariatur ad dolor repudiandae eligendi
-            corporis nulla non suscipit, iure neque earum?
+        <div className="text-center mb-10">
+          <h1 className="animate-glowFadeIn text-3xl md:text-4xl font-bold text-white">
+            <span className="animate-blink inline-block">🔥📘</span> Free Offered Courses <span className="animate-blink inline-block">✨</span>
+          </h1>
+          <p className="animate-fadeIn text-md md:text-lg text-gray-300 mt-2 max-w-2xl mx-auto">
+            Discover our range of free courses designed to spark your curiosity and fuel your learning journey. From beginner-friendly guides to
+            career-focused resources, there’s something for everyone.
           </p>
         </div>
 
-        <div>
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+          viewport={{ once: true }}
+        >
           <Slider {...settings}>
             {book.map((item) => (
               <Cards item={item} key={item.id} />
             ))}
           </Slider>
-        </div>
+        </motion.div>
       </div>
-    </>
+    </section>
   );
 }
 
